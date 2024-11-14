@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESP32 Local Test</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div id="content">
+    <h1>ESP32 Local Communication Test</h1>
+    <!-- Button to clear log -->
+    <button id="clear" onclick="clearLog()">Clear Log</button>
+    <!-- Log display area -->
+    <div id="output"></div>
+    <!-- value display -->
+    <label for="textOutput1">Current Value: </label>
+    <span id="textOutput1">0</span>
+    <!-- Control buttons for movement arranged in a plus pattern -->
+    <div class="control-container">
+      <button id="forwardButton" class="control-button" onclick="sendValue(8)">Forward</button>
+      <button id="leftButton" class="control-button" onclick="sendValue(4)">Left</button>
+      <button id="stopButton" class="control-button" onclick="sendValue(5)">Stop</button>
+      <button id="rightButton" class="control-button" onclick="sendValue(6)">Right</button>
+      <button id="backwardButton" class="control-button" onclick="sendValue(2)">Backward</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
+  <script>
+    // Reference to the log display area
+    const logDiv = document.getElementById("output");
+    /**
+     * Prints a message to the log area with different styles based on source type.
+     */
+    function printToLog(value, source) {
+      let element;
+      switch (source) {
+        case "esp-direct-in":
+          element = document.createElement("p");
+          element.textContent = "ESP(direct): " + value + getTime(" Received directly from ESP RX");
+          break;
+        case "esp-direct-out":
+          element = document.createElement("p");
+          element.textContent = "User (Value): " + value + getTime(" sent directly to ESP");
+          break;
+        case "error":
+          element = document.createElement("p");
+          element.style.color = "red";
+          element.textContent = "Error: " + value;
+          break;
+      }
+      logDiv.appendChild(element);
+
+      // Limit the log to 8 entries
+      while (logDiv.childElementCount > 8) {
+        logDiv.removeChild(logDiv.firstChild);
+      }
+    }
+
+    /**
+     * Clears all log entries in the log display area.
+     */
+    function clearLog() {
+      logDiv.innerHTML = "";
+    }
+
+    /**
+     * Generates a timestamp for messages.
+     */
+    function getTime(text) {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+      return text + " at " + 
+       hours + ":" + 
+      (minutes < 10 ? "0" : "") + minutes + ":" + 
+      (seconds < 10 ? "0" : "") + seconds;
+    }
+  </script>
+</body>
+</html>
